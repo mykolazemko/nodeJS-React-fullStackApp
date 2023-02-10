@@ -1,42 +1,39 @@
 import { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import  fetchUser  from "./Redux/slice";
+import  { fetchUser, createNewUser, deleteUser }  from "./Redux/slice";
 import { useSelector, useDispatch } from 'react-redux';
 
 function App() {
-  const URL = "http://localhost:4000/api";
+  const URL = "/api";
   const [data, setData] = useState(null);
   const [input, setInput] = useState('')
   
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.user)
-  console.log(users)
+  const users = useSelector((state) => state.user.users)
+  const loading = useSelector((state) => state.user.loading)
+  
+  console.log('data', data)
+  console.log('loading', loading)
+  console.log('users', users)
 
   useEffect(() => {
-    // dispatch(fetchUser())
-    fetch(URL)
-      .then((res) => res.json())
-      .then((data) => setData(data));
-  }, []);
+    dispatch(fetchUser())
+  }, [dispatch]);
+  
+  useEffect(() => {
+    setData(users)
+  }, [loading]);
 
   const postMethod = () => {
-    
-    // console.log(input)
-    fetch(URL, {
-      method: "POST",
-      body: JSON.stringify({
-        input
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => setData({...data, json}));
-
+    dispatch(createNewUser(input))
     setInput('')
   };
+
+  const deleteMethod = (id) => {
+    console.log(id)
+    dispatch(deleteUser(id))
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -58,10 +55,11 @@ function App() {
         <button onClick={() => postMethod()}>Create new user</button>
         {!data
           ? "Loading..."
-          : data.map((user, index) => {
+          : users.map((user, index) => {
               return (
-                <div>
+                <div key={user.id}>
                   <span>{`${index + 1}. ${user.name}`}</span>
+                  <span onClick={() => deleteMethod(user.id)}>[X]</span>
                 </div>
               );
             })}
