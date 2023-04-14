@@ -7,9 +7,31 @@
   pointer-events: none;
 }
 
+.deleteBTN {
+  margin: 10px;
+  &:hover {
+    color: #f00;
+    cursor: pointer;
+  }
+}
+
+.editBTN {
+  &:hover {
+    color: #00f;
+    cursor: pointer;
+  }
+}
+
+.doneBTN {
+  &:hover {
+    color: #0f0;
+    cursor: pointer;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 60s linear;
   }
 }
 

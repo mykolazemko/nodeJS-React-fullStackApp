@@ -32,11 +32,17 @@ app.post('/api', (req, res) => {
     res.status(201).json(user)
 })
 
+//UPDATE
+app.put('/api/:id', (req, res) => {
+    console.log(req.body)
+    STATE.map(user => user.id === req.body.id ? user.name = req.body.name : user.name)
+    res.status(200).json(req.body)
+})
+
 //DELETE
-app.delete('/api:id', (req, res) => {
-    console.log(req.params.id)
-    STATE = STATE.filter(user => user.id !== req.params.id)
-    res.status(200).json({message: "contact was deleted"})
+app.delete('/api/:id', (req, res) => {
+    STATE.filter(user => user.id !== req.params.id)
+    res.status(200).json(req.params.id)
 })
 
 app.listen(PORT, () => console.log('server started on PORT 4000...'))

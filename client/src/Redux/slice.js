@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-const URL = "/api";
+const URL = "http://localhost:4000/api";
 const initialState = {
   loading: true,
   users: [],
@@ -26,8 +26,22 @@ export const createNewUser = createAsyncThunk("users/createUser", async (user) =
     .then((res) => res);
 });
 
+export const updateUser = createAsyncThunk("users/updateUser", async (user) => {
+  console.log(user)
+  return fetch(`${URL}/${user.id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      id: user.id,
+      name: user.name
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  })
+})
+
 export const deleteUser = createAsyncThunk("users/deleteUser", async (id) => {
-  return fetch(`http://localhost:4000${URL}/${id}`, {
+  return fetch(`${URL}/${id}`, {
     method: "DELETE",
     body: JSON.stringify({
       id
@@ -81,10 +95,16 @@ const counterSlice = createSlice({
     builder.addCase(createNewUser.rejected, (state, action) => {
       state.loading = false;
     });
+    //update user
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      console.log(action)
+      state.users.map(user => user.id === action.meta.arg.id ? user.name = action.meta.arg.name : user.name)
+      state.loading = false;
+    });
     // delete user
     builder.addCase(deleteUser.fulfilled, (state, action) => {
       console.log(action.payload)
-      state.users.filter(user => user.id !== action.payload);
+      state.users = state.users.filter(user => user.id !== action.payload);
       state.loading = false;
     });
   }
